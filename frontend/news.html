@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>活动新闻 - CSA 计算机软件学会</title>
+<link rel="stylesheet" href="css/theme.css">
+<style>
+/* ============================================================
+   NEWS LIST — Two-column layout
+   ============================================================ */
+.news-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 32px;
+  align-items: start;
+  padding: 48px 0;
+}
+
+/* Sidebar filters */
+.sidebar {
+  position: sticky; top: 80px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  padding: 24px;
+}
+.sidebar h4 {
+  font-size: 1rem; font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+.filter-group { margin-bottom: 20px; }
+.filter-group:last-child { margin-bottom: 0; }
+.filter-label {
+  font-size: .8rem; color: var(--text-muted);
+  margin-bottom: 8px; font-weight: 600;
+}
+.filter-item {
+  display: block; padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: .88rem; color: var(--text-secondary);
+  cursor: pointer; transition: all .2s;
+}
+.filter-item:hover { background: var(--accent-light); color: var(--accent); }
+.filter-item.active {
+  background: var(--accent-light); color: var(--accent-dark);
+  font-weight: 600;
+}
+
+/* Article list */
+.article-list { display: flex; flex-direction: column; gap: 20px; }
+.article-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  display: flex; overflow: hidden;
+  transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+  cursor: pointer;
+}
+.article-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--card-border-hover);
+}
+.article-thumb {
+  width: 240px; min-height: 160px; flex-shrink: 0;
+  background: var(--accent-light);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 2rem;
+  color: var(--accent); opacity: .5;
+}
+.article-info { padding: 20px 24px; flex: 1; display: flex; flex-direction: column; }
+.article-info .card-tag { width: fit-content; }
+.article-info h3 { font-size: 1.15rem; font-weight: 700; margin: 8px 0; color: var(--text-primary); }
+.article-info .excerpt { font-size: .88rem; color: var(--text-muted); line-height: 1.6; flex: 1; }
+.article-info .card-meta { margin-top: auto; padding-top: 8px; }
+
+/* Pagination */
+.pagination {
+  display: flex; justify-content: center; gap: 8px;
+  margin-top: 40px;
+}
+.page-btn {
+  width: 40px; height: 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .9rem; cursor: pointer;
+  transition: all .2s;
+}
+.page-btn:hover { border-color: var(--accent); color: var(--accent); }
+.page-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+.page-btn.disabled { opacity: .4; cursor: not-allowed; }
+
+/* ============================================================
+   NEWS DETAIL
+   ============================================================ */
+.detail-container { max-width: 860px; margin: 0 auto; padding: 60px 24px; }
+.detail-header { text-align: center; margin-bottom: 32px; }
+.detail-header h1 {
+  font-family: var(--font-heading);
+  font-size: 2rem; font-weight: 800;
+  color: var(--text-primary); line-height: 1.3;
+  margin-bottom: 16px;
+}
+.detail-meta {
+  display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+  font-size: .85rem; color: var(--text-muted);
+}
+.detail-meta .card-tag { margin-bottom: 0; }
+
+.detail-cover {
+  width: 100%; height: 360px;
+  background: var(--accent-light);
+  border-radius: var(--radius-lg);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 2.5rem;
+  color: var(--accent); opacity: .4;
+  margin-bottom: 32px;
+}
+
+.detail-body {
+  font-size: 1.05rem; line-height: 1.9;
+  color: var(--text-secondary);
+}
+.detail-body h3 {
+  font-size: 1.3rem; color: var(--text-primary);
+  margin: 28px 0 12px;
+}
+.detail-body p { margin-bottom: 16px; }
+.detail-body pre {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  font-family: var(--font-mono); font-size: .88rem;
+  overflow-x: auto; margin: 16px 0;
+  color: var(--text-primary);
+}
+
+.detail-nav {
+  display: flex; justify-content: space-between; gap: 24px;
+  margin-top: 48px; padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+.detail-prev, .detail-next {
+  flex: 1; text-decoration: none;
+  padding: 16px; border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  transition: all .3s ease;
+}
+.detail-prev:hover, .detail-next:hover {
+  border-color: var(--card-border-hover);
+  box-shadow: var(--shadow-md);
+}
+.detail-next { text-align: right; }
+.detail-nav-label { font-size: .75rem; color: var(--text-muted); margin-bottom: 4px; }
+.detail-nav-title { font-size: .9rem; color: var(--accent); font-weight: 600; }
+
+/* ============================================================
+   VIEW SWITCHER
+   ============================================================ */
+.view-switcher { display: none; }
+.view-list {}
+.view-detail { display: none; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .news-layout { grid-template-columns: 1fr; }
+  .sidebar {
+    position: static; display: flex; flex-wrap: wrap;
+    gap: 12px; padding: 16px;
+  }
+  .sidebar h4 { display: none; }
+  .filter-group { margin-bottom: 0; display: flex; gap: 6px; align-items: center; }
+  .filter-label { margin-bottom: 0; margin-right: 4px; }
+  .article-card { flex-direction: column; }
+  .article-thumb { width: 100%; height: 140px; }
+  .detail-cover { height: 200px; }
+  .detail-nav { flex-direction: column; }
+}
+</style>
+</head>
+<body data-theme="sakura">
+
+<canvas id="particle-canvas"></canvas>
+
+<!-- ====== NAVIGATION ====== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-left">
+      <a href="index.html" class="nav-logo">CSA</a>
+      <span class="nav-slogan">// Code the Future</span>
+    </div>
+    <div class="nav-center">
+      <ul class="nav-links">
+        <li><a href="index.html">首页</a></li>
+        <li><a href="index.html#about">学会简介</a></li>
+        <li><a href="news.html" class="active">活动新闻</a></li>
+        <li><a href="index.html#comp">竞赛成果</a></li>
+        <li><a href="index.html#member">优秀成员</a></li>
+        <li><a href="register.html">报名中心</a></li>
+      </ul>
+    </div>
+    <div class="nav-right">
+      <div class="theme-switcher">
+        <button class="theme-btn sakura active" data-theme="sakura" title="樱粉主题"></button>
+        <button class="theme-btn ocean" data-theme="ocean" title="深蓝主题"></button>
+        <button class="theme-btn forest" data-theme="forest" title="墨绿主题"></button>
+        <button class="theme-btn sunset" data-theme="sunset" title="暖橘主题"></button>
+      </div>
+      <span class="theme-label" id="theme-name">樱粉</span>
+      <div class="user-area" title="登录后显示头像和操作菜单">
+        <div class="user-avatar">👤</div>
+        <span class="user-label">登录</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ====== PAGE HEADER ====== -->
+<div class="page-header">
+  <div class="container">
+    <h1>活动新闻</h1>
+    <div class="breadcrumb"><a href="index.html">首页</a> / 活动新闻</div>
+  </div>
+</div>
+
+<!-- ====== NEWS LIST VIEW ====== -->
+<div class="container view-list" id="listView">
+  <div class="news-layout">
+    <!-- Sidebar filters -->
+    <aside class="sidebar reveal">
+      <h4>分类筛选</h4>
+      <div class="filter-group">
+        <div class="filter-label">按类型</div>
+        <span class="filter-item active" data-filter="all">全部</span>
+        <span class="filter-item" data-filter="tech">技术讲座</span>
+        <span class="filter-item" data-filter="competition">竞赛培训</span>
+        <span class="filter-item" data-filter="activity">团建活动</span>
+        <span class="filter-item" data-filter="other">其他</span>
+      </div>
+    </aside>
+
+    <!-- Article cards -->
+    <div>
+      <div class="article-list" id="articleList">
+        <!-- Articles rendered by JS -->
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== NEWS DETAIL VIEW ====== -->
+<div class="container view-detail" id="detailView">
+  <div class="detail-container">
+    <div class="detail-header reveal">
+      <span class="card-tag" id="detailTag">技术讲座</span>
+      <h1 id="detailTitle"></h1>
+      <div class="detail-meta">
+        <span id="detailDate"></span>
+        <span id="detailSource"></span>
+        <span id="detailLocation"></span>
+      </div>
+    </div>
+    <div class="detail-cover reveal">&lt; article cover /&gt;</div>
+    <div class="detail-body reveal" id="detailBody"></div>
+    <div class="detail-nav reveal" id="detailNav"></div>
+    <div style="text-align:center; margin-top:24px;">
+      <a href="javascript:showList()" class="btn btn-outline btn-sm">← 返回列表</a>
+    </div>
+  </div>
+</div>
+
+<!-- ====== FOOTER ====== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-info">
+      <p><strong>CSA 计算机软件学会</strong></p>
+      <p>邮箱：csa@school.edu.cn | 地址：实训楼 501</p>
+      <p>关注我们：微信公众号 | QQ群：123456789</p>
+    </div>
+    <p class="footer-copy">&copy; 2026 CSA Computer Software Association. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+// ---- Mock Data ----
+const articles = [
+  { id:1, tag:'tech', tagLabel:'技术讲座', title:'LLM 大模型应用开发实战分享会', excerpt:'带你从零上手 LangChain，了解 RAG 架构在知识管理中的应用，包含实战 Demo 和手把手教学环节。', date:'2026-05-15', source:'CSA 技术部', location:'图书馆报告厅', body:`<h3>活动回顾</h3><p>本次技术讲座围绕大语言模型（LLM）的应用开发展开，由 CSA 技术部主办，吸引了全校 120+ 名同学参与。</p><h3>核心内容</h3><p>1. <strong>LangChain 框架入门</strong>：从安装到第一个 Chain 的搭建，讲解了 Prompt Template、Memory、Agent 等核心概念。</p><pre><code>from langchain.chat_models import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
+
+prompt = ChatPromptTemplate.from_template(
+    "请用{language}解释：{topic}"
+)
+model = ChatOpenAI(model="gpt-4")
+chain = prompt | model</code></pre><p>2. <strong>RAG 架构详解</strong>：深入分析了 BM25+Vector 混合检索方案，以及在 CSA 知识库项目中的实际应用，包括 Milvus 向量数据库的部署与调优经验。</p><p>3. <strong>实战环节</strong>：参与者分组搭建了自己的问答机器人，最后评选出 3 个最佳项目获得了奖品。</p><h3>下期预告</h3><p>6 月我们将带来「Agent 智能体实战工作坊」，敬请期待！</p>` },
+  { id:2, tag:'competition', tagLabel:'竞赛培训', title:'蓝桥杯算法集训正式启动', excerpt:'每周三晚 7 点，由竞赛部学长带队刷题，冲刺省赛一等奖，覆盖动态规划、图论等核心题型。', date:'2026-05-10', source:'CSA 竞赛部', location:'实训楼 403', body:`<h3>集训说明</h3><p>蓝桥杯全国软件和信息技术专业人才大赛是教育部认可的 A 类竞赛。CSA 竞赛部每年组织系统化集训，帮助成员高效备赛。</p><h3>集训安排</h3><p>- <strong>时间</strong>：每周三 19:00-21:00<br>- <strong>地点</strong>：实训楼 403<br>- <strong>形式</strong>：专题讲解（45min）+ 分组刷题（60min）+ 讲评（15min）</p><h3>专题计划</h3><p>第一周：动态规划（DP）四大类型<br>第二周：图论 DFS/BFS 模板题<br>第三周：贪心与二分<br>第四周：数据结构（线段树/树状数组）<br>第五周：模拟赛</p><h3>加入方式</h3><p>无需报名，直接到场即可。自带笔记本电脑，建议提前安装 Python/C++ 开发环境。</p>` },
+  { id:3, tag:'activity', tagLabel:'团建活动', title:'CSA 春季技术马拉松完美收官', excerpt:'48 小时极限开发，12 支队伍，6 个精彩项目——代码是最好的团建语言。', date:'2026-04-28', source:'CSA 组织部', location:'创新创业中心', body:`<h3>活动概述</h3><p>春季技术马拉松是 CSA 的传统品牌活动，今年已经是第五届。12 支队伍在 48 小时内完成从零到一的项目开发。</p><h3>获奖项目</h3><p><strong>🥇 金奖：CampusNav</strong><br>基于 AR 导航的校园室内定位系统，使用 React Native + ARCore 实现。</p><p><strong>🥈 银奖：StudySync</strong><br>多人协作学习笔记平台，支持实时同步和 Markdown 渲染。</p><p><strong>🥉 铜奖：GreenCampus</strong><br>校园碳排放可视化平台，结合 IoT 传感器数据。</p><h3>精彩瞬间</h3><p>凌晨 3 点的写码冲刺、产品路演时的精彩 Demo、评委老师的毒舌点评...每个瞬间都值得铭记。</p>` },
+  { id:4, tag:'tech', tagLabel:'技术讲座', title:'React 全栈开发工作坊', excerpt:'从组件设计到服务端渲染，手把手带你构建完整的全栈应用。', date:'2026-05-22', source:'CSA 技术部', location:'实验楼 A201', body:`<h3>工作坊内容</h3><p>本次工作坊聚焦 React 19 的新特性，特别是 Server Components 和 Actions 在实际项目中的应用。</p>` },
+  { id:5, tag:'activity', tagLabel:'团建活动', title:'新生破冰：Code & Coffee 交流会', excerpt:'新老成员面对面交流，喝咖啡聊技术，找到你的学习伙伴。', date:'2026-05-08', source:'CSA 组织部', location:'咖啡厅 B1', body:`<h3>活动介绍</h3><p>Code & Coffee 是 CSA 的月度轻量级交流活动，不设固定议程，旨在提供一个轻松的技术交流氛围。</p>` },
+  { id:6, tag:'other', tagLabel:'其他', title:'CSA 换届选举结果公示', excerpt:'新一届理事会成员名单公布，感谢上一届成员的辛苦付出。', date:'2026-04-20', source:'CSA 理事会', location:'', body:`<h3>选举结果</h3><p>经全体会员投票，新一届 CSA 理事会成员正式产生。</p>` },
+];
+
+let currentFilter = 'all';
+let currentPage = 1;
+const pageSize = 4;
+
+// ---- Filter & Pagination ----
+function renderArticles() {
+  const filtered = currentFilter === 'all'
+    ? articles : articles.filter(a => a.tag === currentFilter);
+  const total = filtered.length;
+  const totalPages = Math.ceil(total / pageSize);
+  const start = (currentPage - 1) * pageSize;
+  const pageArticles = filtered.slice(start, start + pageSize);
+
+  const listEl = document.getElementById('articleList');
+  listEl.innerHTML = pageArticles.map(a => `
+    <article class="article-card reveal" onclick="showDetail(${a.id})">
+      <div class="article-thumb">&lt; ${a.tagLabel} /&gt;</div>
+      <div class="article-info">
+        <span class="card-tag">${a.tagLabel}</span>
+        <h3>${a.title}</h3>
+        <p class="excerpt">${a.excerpt}</p>
+        <div class="card-meta">
+          <span>📅 ${a.date}</span>
+          ${a.location ? `<span>📍 ${a.location}</span>` : ''}
+        </div>
+      </div>
+    </article>
+  `).join('');
+
+  // Pagination
+  const pagEl = document.getElementById('pagination');
+  let pagHTML = '';
+  if (currentPage > 1) {
+    pagHTML += `<span class="page-btn" onclick="goPage(${currentPage-1})">←</span>`;
+  } else {
+    pagHTML += `<span class="page-btn disabled">←</span>`;
+  }
+  for (let i = 1; i <= totalPages; i++) {
+    pagHTML += `<span class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goPage(${i})">${i}</span>`;
+  }
+  if (currentPage < totalPages) {
+    pagHTML += `<span class="page-btn" onclick="goPage(${currentPage+1})">→</span>`;
+  } else {
+    pagHTML += `<span class="page-btn disabled">→</span>`;
+  }
+  pagEl.innerHTML = pagHTML;
+
+  // Re-trigger reveal
+  document.querySelectorAll('.reveal').forEach(el => {
+    el.classList.remove('visible');
+    setTimeout(() => el.classList.add('visible'), 50);
+  });
+}
+
+function goPage(p) { currentPage = p; renderArticles(); window.scrollTo({top:300, behavior:'smooth'}); }
+
+// Filter click
+document.querySelectorAll('.filter-item').forEach(item => {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.filter-item').forEach(i => i.classList.remove('active'));
+    this.classList.add('active');
+    currentFilter = this.dataset.filter;
+    currentPage = 1;
+    renderArticles();
+  });
+});
+
+// ---- Detail View ----
+function showDetail(id) {
+  const a = articles.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById('listView').style.display = 'none';
+  document.getElementById('detailView').style.display = 'block';
+  document.getElementById('detailTag').textContent = a.tagLabel;
+  document.getElementById('detailTitle').textContent = a.title;
+  document.getElementById('detailDate').textContent = '📅 ' + a.date;
+  document.getElementById('detailSource').textContent = '✍ ' + a.source;
+  document.getElementById('detailLocation').textContent = a.location ? '📍 ' + a.location : '';
+  document.getElementById('detailBody').innerHTML = a.body;
+
+  // Prev/Next nav
+  const idx = articles.indexOf(a);
+  const navEl = document.getElementById('detailNav');
+  let navHTML = '';
+  if (idx > 0) {
+    const prev = articles[idx-1];
+    navHTML += `<a href="javascript:showDetail(${prev.id})" class="detail-prev"><div class="detail-nav-label">← 上一篇</div><div class="detail-nav-title">${prev.title}</div></a>`;
+  } else { navHTML += '<div></div>'; }
+  if (idx < articles.length - 1) {
+    const next = articles[idx+1];
+    navHTML += `<a href="javascript:showDetail(${next.id})" class="detail-next"><div class="detail-nav-label">下一篇 →</div><div class="detail-nav-title">${next.title}</div></a>`;
+  } else { navHTML += '<div></div>'; }
+  navEl.innerHTML = navHTML;
+
+  window.scrollTo({top:0, behavior:'smooth'});
+  setTimeout(() => {
+    document.querySelectorAll('#detailView .reveal').forEach(el => el.classList.add('visible'));
+  }, 100);
+}
+
+function showList() {
+  document.getElementById('detailView').style.display = 'none';
+  document.getElementById('listView').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ---- Theme ----
+(function() {
+  const btns = document.querySelectorAll('.theme-btn');
+  const label = document.getElementById('theme-name');
+  const names = { sakura:'樱粉', ocean:'深蓝', forest:'墨绿', sunset:'暖橘' };
+  function setTheme(n) {
+    document.body.setAttribute('data-theme', n);
+    btns.forEach(b => b.classList.toggle('active', b.dataset.theme === n));
+    if (label) label.textContent = names[n] || n;
+    localStorage.setItem('csa-theme', n);
+    initParticles(n);
+  }
+  btns.forEach(b => b.addEventListener('click', () => setTheme(b.dataset.theme)));
+  setTheme(localStorage.getItem('csa-theme') || 'sakura');
+})();
+
+// ---- Particles ----
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [], animFrame, currentTheme = 'sakura';
+
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', () => { resizeCanvas(); initParticles(currentTheme); });
+resizeCanvas();
+
+function initParticles(theme) {
+  currentTheme = theme;
+  if (animFrame) cancelAnimationFrame(animFrame);
+  particles = [];
+  if (theme === 'sakura') for (let i=0;i<40;i++) particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height-canvas.height,size:Math.random()*8+4,sX:(Math.random()-.5)*.6,sY:Math.random()*1.2+.4,rot:Math.random()*Math.PI*2,rS:(Math.random()-.5)*.02,op:Math.random()*.4+.2,clr:Math.random()>.5?'#FAD1DD':'#F08CAE',wb:Math.random()*Math.PI*2});
+  else if (theme === 'ocean') {
+    const chars='01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+    for (let i=0;i<Math.floor(canvas.width/18);i++) particles.push({x:i*18+Math.random()*10,y:Math.random()*canvas.height,speed:Math.random()*2+1,char:chars[Math.floor(Math.random()*chars.length)],op:Math.random()*.15+.05,fs:Math.random()*6+10});
+  }
+  else if (theme === 'forest') for (let i=0;i<30;i++) particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,size:Math.random()*10+6,sX:(Math.random()-.5)*.5,sY:Math.random()*.6+.3,rot:Math.random()*Math.PI*2,rS:(Math.random()-.5)*.03,op:Math.random()*.3+.15,clr:Math.random()>.5?'#8CB88A':'#A8D5A2',sw:Math.random()*Math.PI*2});
+  else if (theme === 'sunset') for (let i=0;i<20;i++) particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,size:Math.random()*30+15,sY:-(Math.random()*.3+.1),op:Math.random()*.12+.04,h:Math.random()*20+20,ph:Math.random()*Math.PI*2});
+  animate();
+}
+let time=0;
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height); time++;
+  if(currentTheme==='sakura') particles.forEach(p=>{p.y+=p.sY;p.x+=p.sX+Math.sin(p.wb)*.3;p.wb+=.02;p.rot+=p.rS;if(p.y>canvas.height+20){p.y=-20;p.x=Math.random()*canvas.width;}ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.globalAlpha=p.op;ctx.fillStyle=p.clr;ctx.beginPath();ctx.ellipse(0,0,p.size,p.size*.55,0,0,Math.PI*2);ctx.fill();ctx.restore();});
+  else if(currentTheme==='ocean') particles.forEach(p=>{p.y+=p.speed;if(p.y>canvas.height+20){p.y=-20;const c='01アイウエオカキクケコ';p.char=c[Math.floor(Math.random()*c.length)];}ctx.fillStyle='#4FC3F7';ctx.globalAlpha=p.op;ctx.font=`${p.fs}px monospace`;ctx.fillText(p.char,p.x,p.y);ctx.globalAlpha=1;});
+  else if(currentTheme==='forest') particles.forEach(p=>{p.y+=p.sY;p.x+=p.sX+Math.sin(p.sw)*.4;p.sw+=.015;p.rot+=p.rS;if(p.y>canvas.height+30){p.y=-30;p.x=Math.random()*canvas.width;}ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.globalAlpha=p.op;ctx.fillStyle=p.clr;ctx.beginPath();ctx.ellipse(0,0,p.size,p.size*.35,0,0,Math.PI*2);ctx.fill();ctx.fillStyle=p.clr;ctx.beginPath();ctx.moveTo(0,-p.size*.35);ctx.lineTo(p.size*.8,0);ctx.lineTo(0,p.size*.35);ctx.closePath();ctx.fill();ctx.restore();});
+  else if(currentTheme==='sunset') particles.forEach(p=>{p.y+=p.sY;if(p.y<-p.size*2){p.y=canvas.height+p.size;p.x=Math.random()*canvas.width;}const pulse=Math.sin(time*.001+p.ph)*.5+.5;const a=p.op*(.7+pulse*.3);const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size);g.addColorStop(0,`hsla(${p.h},100%,65%,${a*2})`);g.addColorStop(.5,`hsla(${p.h},100%,55%,${a})`);g.addColorStop(1,'transparent');ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();});
+  animFrame=requestAnimationFrame(animate);
+}
+initParticles(saved || 'sakura');
+
+// ---- Reveal Observer ----
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, {threshold:0.15});
+setTimeout(()=>document.querySelectorAll('.reveal').forEach(el=>obs.observe(el)),200);
+
+// Init
+renderArticles();
+</script>
+</body>
+</html>

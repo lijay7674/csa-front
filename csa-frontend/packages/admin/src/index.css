@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Admin 后台主题 — 简洁专业风格
+   ============================================================ */
+:root {
+  --admin-bg: #F8FAFC;
+  --admin-sidebar: #1E293B;
+  --admin-sidebar-hover: #334155;
+  --admin-sidebar-active: #3B82F6;
+  --admin-header: #FFFFFF;
+  --admin-card: #FFFFFF;
+  --admin-text: #0F172A;
+  --admin-text-secondary: #64748B;
+  --admin-border: #E2E8F0;
+  --admin-accent: #3B82F6;
+  --admin-accent-hover: #2563EB;
+  --admin-accent-light: #EFF6FF;
+  --admin-danger: #EF4444;
+  --admin-success: #22C55E;
+  --admin-warning: #F59E0B;
+}
+
+body {
+  @apply font-sans text-sm leading-relaxed;
+  background: var(--admin-bg);
+  color: var(--admin-text);
+}

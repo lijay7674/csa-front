@@ -1,0 +1,11 @@
+{
+  "name": "csa-frontend",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter @csa/web dev",
+    "dev:admin": "pnpm --filter @csa/admin dev",
+    "build": "pnpm --filter @csa/web build",
+    "build:admin": "pnpm --filter @csa/admin build",
+    "preview": "pnpm --filter @csa/web preview"
+  }
+}

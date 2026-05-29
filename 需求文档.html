@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CSA 官网需求文档</title>
+  <style>
+    :root {
+      --bg: #f6f1e8;
+      --paper: rgba(255, 252, 247, 0.92);
+      --paper-strong: #fffdf9;
+      --ink: #1c2430;
+      --muted: #5c697a;
+      --line: rgba(28, 36, 48, 0.12);
+      --accent: #0e5ea8;
+      --accent-soft: rgba(14, 94, 168, 0.12);
+      --accent-strong: #083b68;
+      --success: #1a7f55;
+      --shadow: 0 18px 48px rgba(22, 34, 49, 0.12);
+      --radius-lg: 28px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+      --nav-width: 280px;
+      --content-width: 920px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(14, 94, 168, 0.13), transparent 28%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.65), rgba(246, 241, 232, 0.94)),
+        var(--bg);
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      line-height: 1.75;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(14, 94, 168, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(14, 94, 168, 0.04) 1px, transparent 1px);
+      background-size: 34px 34px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.4), transparent 92%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .layout {
+      width: min(1400px, calc(100% - 40px));
+      margin: 32px auto 48px;
+      display: grid;
+      grid-template-columns: var(--nav-width) minmax(0, 1fr);
+      gap: 26px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .panel {
+      background: var(--paper);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      padding: 24px 24px 22px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .brand::after {
+      content: "";
+      position: absolute;
+      right: -34px;
+      top: -36px;
+      width: 118px;
+      height: 118px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(14, 94, 168, 0.26), rgba(14, 94, 168, 0));
+      transform: rotate(18deg);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px rgba(14, 94, 168, 0.12);
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      font-family: "Bahnschrift", "Trebuchet MS", sans-serif;
+      letter-spacing: 0.02em;
+    }
+
+    .brand h1 {
+      margin-top: 18px;
+      font-size: 34px;
+      line-height: 1.08;
+    }
+
+    .brand p {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .meta {
+      padding: 18px 20px;
+    }
+
+    .meta-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .meta-item {
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--paper-strong);
+      border: 1px solid var(--line);
+    }
+
+    .meta-item strong {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .toc {
+      padding: 18px 16px 18px 20px;
+    }
+
+    .toc h2 {
+      font-size: 15px;
+      margin-bottom: 14px;
+    }
+
+    .toc a {
+      display: block;
+      padding: 9px 12px;
+      border-radius: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    .toc a:hover {
+      color: var(--accent-strong);
+      background: var(--accent-soft);
+      transform: translateX(3px);
+    }
+
+    .main {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .hero {
+      padding: 34px 36px 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(14, 94, 168, 0.2), rgba(14, 94, 168, 0));
+    }
+
+    .hero::before {
+      width: 260px;
+      height: 260px;
+      right: -80px;
+      top: -70px;
+    }
+
+    .hero::after {
+      width: 170px;
+      height: 170px;
+      right: 80px;
+      bottom: -82px;
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.9fr);
+      gap: 26px;
+      align-items: start;
+    }
+
+    .hero h2 {
+      font-size: 42px;
+      line-height: 1.08;
+      margin-top: 14px;
+      max-width: 10em;
+    }
+
+    .hero p {
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 42em;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .pill {
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(14, 94, 168, 0.16);
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--accent-strong);
+      font-size: 13px;
+    }
+
+    .hero-card {
+      padding: 18px 18px 16px;
+      border-radius: 22px;
+      background: rgba(16, 32, 52, 0.94);
+      color: #edf4fb;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    }
+
+    .hero-card h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .hero-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: rgba(237, 244, 251, 0.82);
+    }
+
+    .hero-card li + li {
+      margin-top: 8px;
+    }
+
+    .section {
+      padding: 30px 34px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-header h2 {
+      font-size: 28px;
+    }
+
+    .section-header p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 36em;
+      font-size: 14px;
+    }
+
+    .section h3 {
+      font-size: 21px;
+      margin-top: 28px;
+      margin-bottom: 12px;
+    }
+
+    .section h3:first-of-type {
+      margin-top: 0;
+    }
+
+    .section p {
+      margin: 0 0 14px;
+    }
+
+    .section ul,
+    .section ol {
+      margin: 0 0 16px;
+      padding-left: 22px;
+    }
+
+    .section li + li {
+      margin-top: 6px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .card {
+      padding: 18px 18px 16px;
+      border-radius: 18px;
+      background: var(--paper-strong);
+      border: 1px solid var(--line);
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .card p {
+      margin-bottom: 10px;
+      color: var(--muted);
+    }
+
+    .list-plain {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .list-plain li {
+      padding: 10px 0;
+      border-top: 1px dashed rgba(28, 36, 48, 0.14);
+    }
+
+    .list-plain li:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .flow {
+      padding: 14px 16px;
+      border-left: 4px solid var(--accent);
+      background: rgba(14, 94, 168, 0.06);
+      border-radius: 0 16px 16px 0;
+      margin-bottom: 14px;
+    }
+
+    .flow strong {
+      color: var(--accent-strong);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+      background: var(--paper-strong);
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      background: rgba(14, 94, 168, 0.07);
+      font-family: "Bahnschrift", "Trebuchet MS", sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .footer-note {
+      padding: 22px 26px;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    @media (max-width: 1100px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .layout {
+        width: min(100% - 24px, 1400px);
+        margin-top: 18px;
+      }
+
+      .brand,
+      .meta,
+      .toc,
+      .hero,
+      .section {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .hero h2 {
+        font-size: 32px;
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: start;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <section class="panel brand">
+        <span class="eyebrow">Requirement Dossier</span>
+        <h1>CSA 官网需求文档</h1>
+        <p>面向学校计算机软件学会的官网与后台综合管理系统需求整理版，覆盖展示、报名、成员档案、竞赛成果、题库资料与 AI 内容辅助。</p>
+      </section>
+
+      <section class="panel meta">
+        <div class="meta-grid">
+          <div class="meta-item">
+            <strong>项目名称</strong>
+            <span>CSA 官网系统</span>
+          </div>
+          <div class="meta-item">
+            <strong>文档日期</strong>
+            <span>2026-05-28</span>
+          </div>
+          <div class="meta-item">
+            <strong>系统定位</strong>
+            <span>前台展示 + 综合型后台</span>
+          </div>
+          <div class="meta-item">
+            <strong>内容策略</strong>
+            <span>AI 生成初稿，人工审核发布</span>
+          </div>
+        </div>
+      </section>
+
+      <nav class="panel toc">
+        <h2>目录</h2>
+        <a href="#overview">1. 文档概述</a>
+        <a href="#positioning">2. 项目定位</a>
+        <a href="#goals">3. 建设目标</a>
+        <a href="#scope">4. 建设范围</a>
+        <a href="#roles">5. 用户角色</a>
+        <a href="#frontend">6. 前台功能需求</a>
+        <a href="#backend">7. 后台功能需求</a>
+        <a href="#flows">8. 核心业务流程</a>
+        <a href="#states">9. 状态设计</a>
+        <a href="#data">10. 数据字段建议</a>
+        <a href="#nonfunctional">11. 非功能需求</a>
+        <a href="#boundary">12. 本期明确边界</a>
+        <a href="#summary">13. 总结</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <section class="panel hero">
+        <div class="hero-grid">
+          <div>
+            <span class="eyebrow">CSA Portal Spec</span>
+            <h2>一个兼顾展示、管理、竞赛传播与资料沉淀的学会门户</h2>
+            <p>本需求文档定义了学校计算机软件学会官网的整体边界。前台强调学会形象、竞赛与资讯传播，后台强调成员档案、竞赛流程、内容发布、题库沉淀与 AI 辅助写稿能力。</p>
+            <div class="pill-row">
+              <span class="pill">无需账号报名</span>
+              <span class="pill">支持个人与团队竞赛报名</span>
+              <span class="pill">题库资料完全公开</span>
+              <span class="pill">AI 内容必须人工审核</span>
+            </div>
+          </div>
+          <div class="hero-card">
+            <h3>本期重点</h3>
+            <ul>
+              <li>建立学会统一对外展示窗口</li>
+              <li>沉淀历届成员、干部与竞赛成果</li>
+              <li>形成报名、审核、发布、归档闭环</li>
+              <li>用 AI 提升新闻与公告生产效率</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel section" id="overview">
+        <div class="section-header">
+          <h2>1. 文档概述</h2>
+          <p>用于明确官网系统范围、角色、模块、流程与边界，为后续产品设计和实现提供统一依据。</p>
+        </div>
+        <ul>
+          <li>项目名称：CSA 官网系统</li>
+          <li>项目对象：学校计算机软件学会（CSA）</li>
+          <li>文档日期：2026-05-28</li>
+          <li>文档目标：明确前台展示需求、后台综合管理需求、报名需求、题库与资料需求，以及 AI 内容辅助需求。</li>
+        </ul>
+      </section>
+
+      <section class="panel section" id="positioning">
+        <div class="section-header">
+          <h2>2. 项目定位</h2>
+          <p>系统由前台展示官网与后台综合管理系统组成，既服务外部传播，也承担内部管理。</p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <h3>前台展示官网</h3>
+            <p>用于展示学会形象、活动动态、竞赛信息、优秀成员、竞赛成果、技术资讯、历史题库与招新信息，并承接报名与查询。</p>
+          </article>
+          <article class="card">
+            <h3>后台综合管理系统</h3>
+            <p>用于维护成员档案、干部任职、活动与竞赛数据、报名数据、题库资料、前台内容，并提供 AI 内容辅助能力。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel section" id="goals">
+        <div class="section-header">
+          <h2>3. 建设目标</h2>
+          <p>目标不仅是建站，还包括学会资料沉淀、流程规范与内容生产提效。</p>
+        </div>
+        <ol>
+          <li>建立统一的学会对外展示窗口，提升学会形象与影响力。</li>
+          <li>沉淀历届成员、干部、活动、竞赛、获奖、题库等核心资料，避免信息分散。</li>
+          <li>支持招新报名、活动报名、竞赛报名，形成线上报名与后台管理闭环。</li>
+          <li>提升新闻、公告、资讯等内容发布效率，引入 AI 写稿助手辅助生成初稿。</li>
+          <li>为学会长期运营提供可持续的数据管理、内容管理和成果沉淀能力。</li>
+        </ol>
+      </section>
+
+      <section class="panel section" id="scope">
+        <div class="section-header">
+          <h2>4. 建设范围</h2>
+          <p>前台负责公开展示与报名承接，后台负责核心档案、内容、流程和审核。</p>
+        </div>
+        <h3>4.1 前台公开范围</h3>
+        <ul>
+          <li>学会简介</li>
+          <li>活动新闻</li>
+          <li>竞赛公告通知</li>
+          <li>竞赛成果</li>
+          <li>优秀成员</li>
+          <li>技术资讯</li>
+          <li>历史题库</li>
+          <li>招新信息</li>
+          <li>报名中心</li>
+          <li>报名查询</li>
+          <li>联系我们</li>
+        </ul>
+        <h3>4.2 后台管理范围</h3>
+        <ul>
+          <li>成员姓名、届别、专业、联系方式等档案信息</li>
+          <li>干部任职信息</li>
+          <li>活动信息与活动报名记录</li>
+          <li>竞赛信息、个人报名记录、团队报名记录、获奖明细</li>
+          <li>新闻、公告、资讯、招新内容、优秀成员、竞赛成果等前台内容</li>
+          <li>历史题库、资料与附件</li>
+          <li>后台角色、权限与审核流程</li>
+        </ul>
+      </section>
+
+      <section class="panel section" id="roles">
+        <div class="section-header">
+          <h2>5. 用户角色</h2>
+          <p>按使用场景划分为访客、报名用户、内容编辑、活动竞赛管理员、成员管理员和高级管理者。</p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <h3>普通访客</h3>
+            <ul class="list-plain">
+              <li>浏览官网公开内容</li>
+              <li>下载公开题库与资料</li>
+              <li>提交招新、活动、竞赛报名</li>
+              <li>查询报名状态</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>报名用户</h3>
+            <ul class="list-plain">
+              <li>无需注册登录</li>
+              <li>通过前台表单提交报名信息</li>
+              <li>通过手机号、学号、报名编号查询进度</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>内容编辑 / 宣传负责人</h3>
+            <ul class="list-plain">
+              <li>维护新闻、公告、资讯、招新内容</li>
+              <li>使用 AI 内容助手生成初稿</li>
+              <li>提交审核，不可直接发布</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>活动 / 竞赛管理员</h3>
+            <ul class="list-plain">
+              <li>维护活动与竞赛信息</li>
+              <li>处理报名审核</li>
+              <li>维护名单、成绩、获奖信息</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>成员管理员 / 组织负责人</h3>
+            <ul class="list-plain">
+              <li>维护成员档案</li>
+              <li>维护干部任职信息</li>
+              <li>维护成员状态与历史归档</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>超级管理员 / 指导老师</h3>
+            <ul class="list-plain">
+              <li>管理后台账号与权限</li>
+              <li>审核重要内容</li>
+              <li>查看统计报表与敏感信息</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel section" id="frontend">
+        <div class="section-header">
+          <h2>6. 前台功能需求</h2>
+          <p>前台既是展示网站，也是学会对外传播竞赛与技术内容的主阵地。</p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <h3>首页</h3>
+            <p>集中展示学会简介摘要、最新新闻、近期活动、竞赛成果精选、优秀成员、招新与报名入口、资讯与题库推荐。</p>
+          </article>
+          <article class="card">
+            <h3>学会简介</h3>
+            <p>展示学会介绍、成立背景、宗旨目标、组织结构、指导老师、发展历程和历届建设成果。</p>
+          </article>
+          <article class="card">
+            <h3>活动新闻</h3>
+            <p>提供新闻列表与详情页，支持发布时间、来源、图片、正文展示以及按时间或分类浏览。</p>
+          </article>
+          <article class="card">
+            <h3>竞赛公告通知</h3>
+            <p>发布比赛、选拔、培训与通知信息，支持详情展示、报名入口跳转、截止时间与适用对象说明。</p>
+          </article>
+          <article class="card">
+            <h3>竞赛成果</h3>
+            <p>前台简要展示竞赛名称、年份、获奖等级、成员姓名、指导老师和成果简介。</p>
+          </article>
+          <article class="card">
+            <h3>优秀成员</h3>
+            <p>前台简要展示姓名、届别、学习或技术方向、代表成果与获奖摘要，不展示敏感隐私信息。</p>
+          </article>
+          <article class="card">
+            <h3>技术资讯</h3>
+            <p>发布技术动态、竞赛资讯、学习资源推荐和技术分享回顾，强化计算机学会特色。</p>
+          </article>
+          <article class="card">
+            <h3>历史题库</h3>
+            <p>支持题目展示、资料说明、附件下载，并按年份、分类、来源筛选浏览。资料完全公开。</p>
+          </article>
+          <article class="card">
+            <h3>招新信息</h3>
+            <p>发布招新时间、对象、要求、流程、报名方式、常见问题和联系方式。</p>
+          </article>
+          <article class="card">
+            <h3>报名中心</h3>
+            <p>统一承接招新报名、活动报名、竞赛报名，竞赛报名需支持个人与团队两种方式，且均无需账号。</p>
+          </article>
+          <article class="card">
+            <h3>报名查询</h3>
+            <p>通过手机号、学号、报名编号查询审核状态、后续处理说明与是否已联系。</p>
+          </article>
+          <article class="card">
+            <h3>联系我们</h3>
+            <p>展示邮箱、公众号、QQ群、学院或办公地点、负责部门或联系人。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel section" id="backend">
+        <div class="section-header">
+          <h2>7. 后台功能需求</h2>
+          <p>后台以综合管理为主，不仅管内容，也管成员、活动、竞赛、题库与审核。</p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <h3>成员管理</h3>
+            <p>支持成员新增、编辑、删除、查询、毕业归档和状态维护。建议字段包括姓名、届别、专业、班级、联系方式、技术方向、加入时间、在会状态。</p>
+          </article>
+          <article class="card">
+            <h3>干部任职管理</h3>
+            <p>维护历届干部姓名、届别、部门、职务、任职时间和备注，支持任职历史留存。</p>
+          </article>
+          <article class="card">
+            <h3>活动管理</h3>
+            <p>支持活动创建、时间地点维护、负责人维护、活动新闻关联、活动报名查看和活动总结维护。</p>
+          </article>
+          <article class="card">
+            <h3>竞赛管理</h3>
+            <p>支持竞赛分类、报名审核、个人和团队报名记录管理、成绩登记、获奖维护及前台展示控制。</p>
+          </article>
+          <article class="card">
+            <h3>报名管理</h3>
+            <p>统一处理招新、活动、竞赛三类报名，支持状态审核、人工联系记录、备注记录和名单导出。</p>
+          </article>
+          <article class="card">
+            <h3>内容管理</h3>
+            <p>覆盖活动新闻、竞赛公告、技术资讯、招新内容、优秀成员展示和竞赛成果展示，支持草稿到发布的状态流转。</p>
+          </article>
+          <article class="card">
+            <h3>题库与资料管理</h3>
+            <p>支持题目录入、分类管理、年份管理、来源说明、附件上传、下载资源维护与公开状态控制。</p>
+          </article>
+          <article class="card">
+            <h3>AI 内容助手</h3>
+            <p>支持活动新闻初稿生成、公告通知生成、技术资讯整理、内容润色和多风格输出，但所有结果必须人工审核后发布。</p>
+          </article>
+          <article class="card">
+            <h3>权限管理</h3>
+            <p>支持角色管理、账号管理、模块权限分配、内容审核权限分配和敏感数据可见范围控制。</p>
+          </article>
+          <article class="card">
+            <h3>统计查询</h3>
+            <p>支持按年份、届别、专业、比赛类型、获奖等级、活动类别和报名状态等维度统计筛选。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel section" id="flows">
+        <div class="section-header">
+          <h2>8. 核心业务流程</h2>
+          <p>关键流程围绕内容发布、报名审核、成员归档和题库沉淀构建。</p>
+        </div>
+        <div class="flow">
+          <strong>8.1 新闻 / 活动内容发布流程：</strong>
+          管理员录入活动基础信息，AI 生成新闻初稿，编辑人员审核并修改内容，审核通过后发布到前台。
+        </div>
+        <div class="flow">
+          <strong>8.2 招新报名流程：</strong>
+          学生查看招新公告并提交报名表，后台生成报名记录，管理员审核并人工联系报名人，报名人可在前台查询状态。
+        </div>
+        <div class="flow">
+          <strong>8.3 活动报名流程：</strong>
+          学生查看活动详情并提交报名，后台查看报名名单并审核，活动结束后补充签到或活动总结。
+        </div>
+        <div class="flow">
+          <strong>8.4 竞赛报名流程：</strong>
+          学生查看竞赛公告，选择个人报名或团队报名并提交信息，管理员审核后形成参赛记录，后续继续维护成绩与获奖信息。
+        </div>
+        <div class="flow">
+          <strong>8.5 成员档案管理流程：</strong>
+          成员加入学会后建立档案，记录届别、专业、联系方式、技术方向等信息；如担任干部，则关联任职信息；毕业或退出后转为历史归档。
+        </div>
+        <div class="flow">
+          <strong>8.6 题库与资料发布流程：</strong>
+          管理员录入题目、填写分类和来源说明、上传资料附件，审核通过后前台公开展示，访客可直接查看并下载。
+        </div>
+      </section>
+
+      <section class="panel section" id="states">
+        <div class="section-header">
+          <h2>9. 状态设计</h2>
+          <p>通过统一状态管理减少后台处理歧义，便于后续统计与追踪。</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>状态类型</th>
+                <th>建议状态</th>
+                <th>说明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>报名状态</td>
+                <td>待审核、已通过、已拒绝、已取消、已结束</td>
+                <td>适用于招新、活动、竞赛报名记录</td>
+              </tr>
+              <tr>
+                <td>内容状态</td>
+                <td>草稿、AI 初稿、待审核、已发布、已下线</td>
+                <td>适用于新闻、公告、资讯等内容发布流</td>
+              </tr>
+              <tr>
+                <td>竞赛状态</td>
+                <td>报名中、审核中、已确认、进行中、已结束</td>
+                <td>适用于竞赛项目生命周期管理</td>
+              </tr>
+              <tr>
+                <td>成员状态</td>
+                <td>在会、干部、已毕业、已退出、历史归档</td>
+                <td>适用于成员档案与组织管理</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel section" id="data">
+        <div class="section-header">
+          <h2>10. 数据字段建议</h2>
+          <p>以下字段用于帮助后续原型设计和表结构梳理，属于建议字段集合。</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>数据对象</th>
+                <th>建议字段</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>成员档案</td>
+                <td>姓名、性别、届别、专业、班级、学号、联系方式、技术方向、加入时间、当前状态</td>
+              </tr>
+              <tr>
+                <td>干部任职</td>
+                <td>姓名、届别、部门、职务、任职开始时间、任职结束时间、备注</td>
+              </tr>
+              <tr>
+                <td>活动信息</td>
+                <td>活动名称、活动类型、开始时间、结束时间、地点、负责人、活动简介、报名截止时间、活动状态</td>
+              </tr>
+              <tr>
+                <td>竞赛信息</td>
+                <td>竞赛名称、竞赛级别、竞赛类型、年份、主办方、报名方式、报名截止时间、竞赛状态</td>
+              </tr>
+              <tr>
+                <td>报名记录</td>
+                <td>报名类型、报名人姓名、学号、手机号、团队名称、团队成员、提交时间、审核状态、联系记录</td>
+              </tr>
+              <tr>
+                <td>题库资料</td>
+                <td>题目标题、年份、分类、来源、内容简介、附件地址、公开状态、版权说明</td>
+              </tr>
+              <tr>
+                <td>内容信息</td>
+                <td>标题、栏目类型、摘要、正文、封面图、来源、发布时间、发布状态、是否 AI 生成初稿</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel section" id="nonfunctional">
+        <div class="section-header">
+          <h2>11. 非功能需求</h2>
+          <p>这些要求不直接体现为某一个页面，但会直接影响系统可用性和长期维护成本。</p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <h3>易用性</h3>
+            <ul class="list-plain">
+              <li>前台界面清晰，栏目结构明确</li>
+              <li>后台录入流程简洁，减少重复填写</li>
+              <li>报名流程尽量短，适合未登录用户直接提交</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>可维护性</h3>
+            <ul class="list-plain">
+              <li>前后台模块划分清晰</li>
+              <li>数据结构便于后续扩展</li>
+              <li>内容栏目支持持续新增</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>可访问性</h3>
+            <ul class="list-plain">
+              <li>支持桌面端浏览</li>
+              <li>兼顾移动端访问</li>
+              <li>公开资料可稳定下载</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>数据安全</h3>
+            <ul class="list-plain">
+              <li>后台敏感数据仅授权角色可见</li>
+              <li>前台不公开成员隐私信息</li>
+              <li>AI 内容不能绕过审核直接发布</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel section" id="boundary">
+        <div class="section-header">
+          <h2>12. 本期明确边界</h2>
+          <p>以下内容已经在需求阶段定口径，可直接作为后续设计的硬约束。</p>
+        </div>
+        <ol>
+          <li>报名无需账号，直接填写表单提交。</li>
+          <li>报名支持前台查询，同时保留后台人工联系机制。</li>
+          <li>竞赛报名支持个人报名和团队报名。</li>
+          <li>优秀成员与竞赛成果前台采用简要展示。</li>
+          <li>历史题库支持题目、资料、下载，且完全公开。</li>
+          <li>活动新闻、公告、资讯可引入 AI 写稿助手，但必须人工审核后发布。</li>
+        </ol>
+      </section>
+
+      <section class="panel section" id="summary">
+        <div class="section-header">
+          <h2>13. 总结</h2>
+          <p>系统应兼顾外部展示与内部治理，并通过 AI 提升内容生产效率但不放弃人工把关。</p>
+        </div>
+        <p>CSA 官网系统应定位为一个兼顾展示、管理、竞赛信息传播和资料沉淀的学会门户。系统不仅要满足对外展示需求，还要承担学会内部成员管理、竞赛管理、报名管理、题库管理和内容管理工作。同时通过 AI 内容助手提升发布效率，但保持人工审核作为最终控制环节。</p>
+      </section>
+
+      <footer class="panel footer-note">
+        CSA 官网需求文档 · 2026-05-28 · Markdown 与 HTML 双版本同步整理
+      </footer>
+    </main>
+  </div>
+</body>
+</html>
