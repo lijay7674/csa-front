@@ -1,4 +1,4 @@
-package com.csa.aggregate.publicapi
+package com.csa.aggregate.publicapi;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -18,7 +18,6 @@ import com.csa.questionbank.entity.CsaQuestionBank;
 import com.csa.questionbank.mapper.CsaQuestionBankMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -113,7 +112,7 @@ public class PublicApiController {
     public R<Map<String, Object>> home() {
         Map<String, Object> data = new HashMap<>();
 
-        // 最�?条新�?(category=NEWS, status=PUBLISHED)
+        // 最新5条新闻 (category=NEWS, status=PUBLISHED)
         LambdaQueryWrapper<CsaContent> newsWrapper = new LambdaQueryWrapper<>();
         newsWrapper.eq(CsaContent::getStatus, "PUBLISHED")
                 .eq(CsaContent::getCategory, "NEWS")
@@ -122,12 +121,13 @@ public class PublicApiController {
         data.put("news", csaContentMapper.selectList(newsWrapper).stream()
                 .map(this::toPublicContent).collect(Collectors.toList()));
 
-        // 最�?条活�?        LambdaQueryWrapper<CsaEvent> eventWrapper = new LambdaQueryWrapper<>();
+        // 最新3条活动
+        LambdaQueryWrapper<CsaEvent> eventWrapper = new LambdaQueryWrapper<>();
         eventWrapper.orderByDesc(CsaEvent::getCreatedAt).last("LIMIT 3");
         data.put("events", csaEventMapper.selectList(eventWrapper).stream()
                 .map(this::toPublicEvent).collect(Collectors.toList()));
 
-        // 最�?条竞赛成�?(关联竞赛�?
+        // 最新3条竞赛成果 (关联竞赛表)
         LambdaQueryWrapper<CsaCompetitionAward> awardWrapper = new LambdaQueryWrapper<>();
         awardWrapper.eq(CsaCompetitionAward::getIsPublicDisplay, 1)
                 .orderByDesc(CsaCompetitionAward::getCreatedAt)
@@ -138,7 +138,7 @@ public class PublicApiController {
             return toPublicAward(a, comp);
         }).collect(Collectors.toList()));
 
-        // 最�?条优秀成员 (isPublicDisplay=1)
+        // 最新3条优秀成员 (isPublicDisplay=1)
         LambdaQueryWrapper<CsaMember> memberWrapper = new LambdaQueryWrapper<>();
         memberWrapper.eq(CsaMember::getIsPublicDisplay, 1)
                 .orderByDesc(CsaMember::getCreatedAt)
@@ -146,7 +146,7 @@ public class PublicApiController {
         data.put("members", csaMemberMapper.selectList(memberWrapper).stream()
                 .map(this::toPublicMember).collect(Collectors.toList()));
 
-        // 最�?条技术文�?(category=TECH, status=PUBLISHED)
+        // 最新3条技术文章 (category=TECH, status=PUBLISHED)
         LambdaQueryWrapper<CsaContent> techWrapper = new LambdaQueryWrapper<>();
         techWrapper.eq(CsaContent::getStatus, "PUBLISHED")
                 .eq(CsaContent::getCategory, "TECH")
@@ -155,7 +155,7 @@ public class PublicApiController {
         data.put("techArticles", csaContentMapper.selectList(techWrapper).stream()
                 .map(this::toPublicContent).collect(Collectors.toList()));
 
-        // 最�?条题�?(isPublic=1)
+        // 最新3条题库 (isPublic=1)
         LambdaQueryWrapper<CsaQuestionBank> qbWrapper = new LambdaQueryWrapper<>();
         qbWrapper.eq(CsaQuestionBank::getIsPublic, 1)
                 .orderByDesc(CsaQuestionBank::getCreatedAt)
@@ -169,7 +169,7 @@ public class PublicApiController {
     // ==================== 关于我们 ====================
 
     @GetMapping("/about")
-    @Operation(summary = "学会简�?)
+    @Operation(summary = "学会简介")
     public R<Map<String, Object>> about() {
         LambdaQueryWrapper<CsaContent> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(CsaContent::getCategory, "ABOUT")
@@ -208,7 +208,7 @@ public class PublicApiController {
     public R<Map<String, Object>> newsDetail(@PathVariable Long id) {
         CsaContent content = csaContentMapper.selectById(id);
         if (content == null || !"PUBLISHED".equals(content.getStatus())) {
-            return R.fail("内容不存�?);
+            return R.fail("内容不存在");
         }
         return R.ok(toPublicContent(content));
     }
@@ -238,7 +238,7 @@ public class PublicApiController {
         CsaContent content = csaContentMapper.selectById(id);
         if (content == null || !"PUBLISHED".equals(content.getStatus())
                 || !"NOTICE".equals(content.getCategory())) {
-            return R.fail("公告不存�?);
+            return R.fail("公告不存在");
         }
         return R.ok(toPublicContent(content));
     }
@@ -256,7 +256,6 @@ public class PublicApiController {
         wrapper.eq(CsaCompetitionAward::getIsPublicDisplay, 1)
                 .orderByDesc(CsaCompetitionAward::getCreatedAt);
 
-        // 如果需要按年份或等级筛选，需要先找出符合条件的竞赛ID
         if (year != null || level != null) {
             LambdaQueryWrapper<CsaCompetition> compWrapper = new LambdaQueryWrapper<>();
             if (year != null) compWrapper.eq(CsaCompetition::getYear, year);
@@ -302,10 +301,10 @@ public class PublicApiController {
         return R.ok(result);
     }
 
-    // ==================== 技术文�?====================
+    // ==================== 技术文章 ====================
 
     @GetMapping("/tech")
-    @Operation(summary = "技术文章列�?)
+    @Operation(summary = "技术文章列表")
     public R<IPage<Map<String, Object>>> tech(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -322,12 +321,12 @@ public class PublicApiController {
     }
 
     @GetMapping("/tech/{id}")
-    @Operation(summary = "技术文章详�?)
+    @Operation(summary = "技术文章详情")
     public R<Map<String, Object>> techDetail(@PathVariable Long id) {
         CsaContent content = csaContentMapper.selectById(id);
         if (content == null || !"PUBLISHED".equals(content.getStatus())
                 || !"TECH".equals(content.getCategory())) {
-            return R.fail("文章不存�?);
+            return R.fail("文章不存在");
         }
         return R.ok(toPublicContent(content));
     }

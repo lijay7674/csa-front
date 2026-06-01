@@ -21,7 +21,8 @@ public class AiController {
     @Operation(summary = "AI生成内容")
     public R<Map<String, String>> generate(@Valid @RequestBody GenerateRequest request) {
         log.info("AI生成请求 - prompt: {}, style: {}", request.getPrompt(), request.getStyle());
-        // TODO: 接入LLM API，当前返回占位内�?        String generated = "AI生成内容: " + request.getPrompt();
+        // TODO: 接入LLM API，当前返回占位内容
+        String generated = "AI生成内容: " + request.getPrompt();
         return R.ok(Map.of("content", generated));
     }
 
@@ -29,7 +30,8 @@ public class AiController {
     @Operation(summary = "AI润色内容")
     public R<Map<String, String>> polish(@Valid @RequestBody PolishRequest request) {
         log.info("AI润色请求 - content: {}, style: {}", request.getContent(), request.getStyle());
-        // TODO: 接入LLM API，当前返回占位内�?        String polished = "AI润色内容: " + request.getContent();
+        // TODO: 接入LLM API，当前返回占位内容
+        String polished = "AI润色内容: " + request.getContent();
         return R.ok(Map.of("content", polished));
     }
 }

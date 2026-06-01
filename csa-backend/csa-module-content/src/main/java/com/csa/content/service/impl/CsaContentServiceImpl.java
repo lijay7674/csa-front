@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Service
 public class CsaContentServiceImpl extends ServiceImpl<CsaContentMapper, CsaContent> implements CsaContentService {
@@ -26,7 +25,7 @@ public class CsaContentServiceImpl extends ServiceImpl<CsaContentMapper, CsaCont
     public CsaContent getById(Long id) {
         CsaContent content = baseMapper.selectById(id);
         if (content == null) {
-            throw new IllegalArgumentException("内容不存�?);
+            throw new IllegalArgumentException("内容不存在");
         }
         return content;
     }

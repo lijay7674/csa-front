@@ -1,11 +1,11 @@
 package com.csa.common.enums;
 
 public enum RegistrationStatus {
-    PENDING("待审�?),
+    PENDING("待审核"),
     APPROVED("已通过"),
-    REJECTED("已拒�?),
-    CANCELLED("已取�?),
-    ENDED("已结�?);
+    REJECTED("已拒绝"),
+    CANCELLED("已取消"),
+    ENDED("已结束");
 
     private final String label;
 

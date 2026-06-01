@@ -1,4 +1,4 @@
-package com.csa.aggregate.publicapi
+package com.csa.aggregate.publicapi;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -22,7 +22,7 @@ import java.nio.file.Files;
 @RestController
 @RequestMapping("/api/public/question-bank")
 @RequiredArgsConstructor
-@Tag(name = "前台题库", description = "公开题库浏览与下�?)
+@Tag(name = "前台题库", description = "公开题库浏览与下载")
 public class PublicQuestionBankController {
 
     private final CsaQuestionBankMapper questionBankMapper;

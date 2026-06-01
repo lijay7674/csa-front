@@ -1,4 +1,4 @@
-package com.csa.aggregate.statistics
+package com.csa.aggregate.statistics;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.csa.common.R;
@@ -63,7 +63,7 @@ public class StatisticsController {
     }
 
     @GetMapping("/by-cohort")
-    @Operation(summary = "按届别统计成�?)
+    @Operation(summary = "按届别统计成员")
     public R<Map<String, Long>> byCohort() {
         List<CsaMember> members = csaMemberMapper.selectList(null);
         Map<String, Long> result = members.stream()
@@ -73,9 +73,10 @@ public class StatisticsController {
     }
 
     @GetMapping("/by-competition")
-    @Operation(summary = "按竞赛等级统计获�?)
+    @Operation(summary = "按竞赛等级统计获奖")
     public R<Map<String, Long>> byCompetition() {
-        // TODO: 可扩展为关联竞赛表获取等级信�?        List<CsaCompetition> competitions = csaCompetitionMapper.selectList(null);
+        // TODO: 可扩展为关联竞赛表获取等级信息
+        List<CsaCompetition> competitions = csaCompetitionMapper.selectList(null);
         Map<String, Long> result = competitions.stream()
                 .filter(c -> c.getLevel() != null)
                 .collect(Collectors.groupingBy(CsaCompetition::getLevel, Collectors.counting()));
@@ -83,7 +84,7 @@ public class StatisticsController {
     }
 
     @GetMapping("/by-event-type")
-    @Operation(summary = "按活动类型统�?)
+    @Operation(summary = "按活动类型统计")
     public R<Map<String, Long>> byEventType() {
         List<CsaEvent> events = csaEventMapper.selectList(null);
         Map<String, Long> result = events.stream()

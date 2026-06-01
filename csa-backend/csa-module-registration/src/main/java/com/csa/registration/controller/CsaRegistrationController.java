@@ -37,12 +37,12 @@ public class CsaRegistrationController {
     public R<CsaRegistration> getById(@PathVariable Long id) {
         CsaRegistration registration = csaRegistrationService.getById(id);
         if (registration == null) {
-            return R.fail("报名记录不存�?);
+            return R.fail("报名记录不存在");
         }
         return R.ok(registration);
     }
 
-    @Operation(summary = "更新报名状态（审核�?)
+    @Operation(summary = "更新报名状态（审核）")
     @PutMapping("/{id}/status")
     public R<Void> updateStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
         String status = body.get("status");

@@ -141,7 +141,7 @@ public class CsaRegistrationServiceImpl implements CsaRegistrationService {
 
         Long count = csaRegistrationMapper.selectCount(wrapper);
         if (count != null && count > 0) {
-            throw new RuntimeException("您已提交过相同的报名申请，请勿重复提�?);
+            throw new RuntimeException("您已提交过相同的报名申请，请勿重复提交");
         }
     }
 }

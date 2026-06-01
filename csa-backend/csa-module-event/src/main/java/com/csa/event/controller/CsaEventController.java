@@ -26,8 +26,8 @@ public class CsaEventController {
             @Parameter(description = "页码") @RequestParam(defaultValue = "1") int page,
             @Parameter(description = "每页条数") @RequestParam(defaultValue = "10") int size,
             @Parameter(description = "活动类型") @RequestParam(required = false) String eventType,
-            @Parameter(description = "活动状�?) @RequestParam(required = false) String status,
-            @Parameter(description = "关键词（标题/描述�?) @RequestParam(required = false) String keyword) {
+            @Parameter(description = "活动状态") @RequestParam(required = false) String status,
+            @Parameter(description = "关键词（标题/描述）") @RequestParam(required = false) String keyword) {
         IPage<CsaEvent> result = eventService.listPage(page, size, eventType, status, keyword);
         return R.ok(result);
     }
@@ -37,7 +37,7 @@ public class CsaEventController {
     public R<CsaEvent> get(@Parameter(description = "活动ID") @PathVariable Long id) {
         CsaEvent event = eventService.getById(id);
         if (event == null) {
-            return R.fail("活动不存�?);
+            return R.fail("活动不存在");
         }
         return R.ok(event);
     }
@@ -56,7 +56,7 @@ public class CsaEventController {
                               @RequestBody CsaEvent event) {
         CsaEvent existing = eventService.getById(id);
         if (existing == null) {
-            return R.fail("活动不存�?);
+            return R.fail("活动不存在");
         }
         CsaEvent updated = eventService.update(id, event);
         log.info("Event updated: id={}", id);
@@ -68,7 +68,7 @@ public class CsaEventController {
     public R<Void> delete(@Parameter(description = "活动ID") @PathVariable Long id) {
         CsaEvent existing = eventService.getById(id);
         if (existing == null) {
-            return R.fail("活动不存�?);
+            return R.fail("活动不存在");
         }
         eventService.delete(id);
         log.info("Event deleted: id={}", id);

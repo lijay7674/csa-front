@@ -29,7 +29,7 @@ public class PublicRegistrationController {
         }
     }
 
-    @Operation(summary = "查询报名状�?)
+    @Operation(summary = "查询报名状态")
     @GetMapping("/query")
     public R<List<CsaRegistration>> query(@RequestParam(required = false) String phone,
                                            @RequestParam(required = false) String studentId,

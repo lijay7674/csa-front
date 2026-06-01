@@ -1,7 +1,7 @@
 package com.csa.common.enums;
 
 public enum ContentCategory {
-    ABOUT("学会简�?),
+    ABOUT("学会介绍"),
     NEWS("新闻"),
     NOTICE("公告"),
     TECH("资讯"),

@@ -29,7 +29,7 @@ public class CsaQuestionBankController {
             @Parameter(description = "每页条数") @RequestParam(defaultValue = "10") int size,
             @Parameter(description = "年份") @RequestParam(required = false) Integer year,
             @Parameter(description = "分类") @RequestParam(required = false) String category,
-            @Parameter(description = "关键�?) @RequestParam(required = false) String keyword) {
+            @Parameter(description = "关键词") @RequestParam(required = false) String keyword) {
         IPage<CsaQuestionBank> result = questionBankService.listPage(page, size, year, category, keyword);
         return R.ok(result);
     }

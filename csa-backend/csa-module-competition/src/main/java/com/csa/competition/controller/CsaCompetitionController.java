@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/competitions")
 @RequiredArgsConstructor
-@Tag(name = "竞赛管理", description = "竞赛及获奖管�?)
+@Tag(name = "竞赛管理", description = "竞赛及获奖管理")
 public class CsaCompetitionController {
 
     private final CsaCompetitionService competitionService;
@@ -38,7 +38,7 @@ public class CsaCompetitionController {
     public R<CsaCompetition> getById(@PathVariable Long id) {
         CsaCompetition competition = competitionService.getById(id);
         if (competition == null) {
-            return R.fail("竞赛不存�?);
+            return R.fail("竞赛不存在");
         }
         return R.ok(competition);
     }
@@ -66,7 +66,7 @@ public class CsaCompetitionController {
     }
 
     @GetMapping("/{competitionId}/awards")
-    @Operation(summary = "查询竞赛的获奖列�?)
+    @Operation(summary = "查询竞赛的获奖列表")
     public R<List<CsaCompetitionAward>> getAwards(@PathVariable Long competitionId) {
         return R.ok(competitionService.getAwards(competitionId));
     }

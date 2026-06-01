@@ -36,7 +36,7 @@ public class CsaMemberController {
     public R<CsaMember> getById(@PathVariable Long id) {
         CsaMember member = csaMemberService.getById(id);
         if (member == null) {
-            return R.fail("成员不存�?);
+            return R.fail("成员不存在");
         }
         return R.ok(member);
     }
@@ -72,13 +72,13 @@ public class CsaMemberController {
         return R.ok();
     }
 
-    @Operation(summary = "更新成员状�?)
+    @Operation(summary = "更新成员状态")
     @PutMapping("/{id}/status")
     public R<Void> updateStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
         String status = body.get("status");
         boolean success = csaMemberService.updateStatus(id, status);
         if (!success) {
-            return R.fail("状态更新失�?);
+            return R.fail("状态更新失败");
         }
         return R.ok();
     }
