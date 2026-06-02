@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+/**
+ * @author tanlja
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/admin/ai")

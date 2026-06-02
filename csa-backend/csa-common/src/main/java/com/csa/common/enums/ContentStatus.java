@@ -1,5 +1,9 @@
 package com.csa.common.enums;
 
+/**
+ * @author tanlja
+ */
+
 public enum ContentStatus {
     DRAFT("草稿"),
     AI_DRAFT("AI初稿"),

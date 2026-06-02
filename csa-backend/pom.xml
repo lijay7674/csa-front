@@ -20,19 +20,14 @@
     <modules>
         <module>csa-common</module>
         <module>csa-module-auth</module>
-        <module>csa-module-member</module>
-        <module>csa-module-event</module>
-        <module>csa-module-competition</module>
-        <module>csa-module-content</module>
-        <module>csa-module-registration</module>
-        <module>csa-module-questionbank</module>
         <module>csa-module-ai</module>
-        <module>csa-module-aggregate</module>
         <module>csa-server</module>
     </modules>
 
     <properties>
         <java.version>21</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <mybatis-plus.version>3.5.10.1</mybatis-plus.version>
         <springdoc.version>3.0.3</springdoc.version>
         <jjwt.version>0.12.6</jjwt.version>
@@ -88,4 +83,14 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+    </dependencies>
 </project>

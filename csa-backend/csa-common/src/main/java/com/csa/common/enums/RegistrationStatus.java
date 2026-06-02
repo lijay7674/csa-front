@@ -1,5 +1,7 @@
 package com.csa.common.enums;
-
+/**
+ * @author tanlja
+ */
 public enum RegistrationStatus {
     PENDING("待审核"),
     APPROVED("已通过"),

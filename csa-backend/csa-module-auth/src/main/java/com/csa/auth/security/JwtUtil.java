@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.util.Date;
 
+/**
+ * @author tanlja
+ */
 @Slf4j
 @Component
 public class JwtUtil {

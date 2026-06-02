@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.nio.file.AccessDeniedException;
 
+/**
+ * @author tanlja
+ */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {

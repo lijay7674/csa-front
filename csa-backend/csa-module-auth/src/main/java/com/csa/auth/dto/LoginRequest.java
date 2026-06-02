@@ -3,6 +3,9 @@ package com.csa.auth.dto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+/**
+ * @author tanlja
+ */
 @Data
 public class LoginRequest {
     @NotBlank(message = "用户名不能为空")

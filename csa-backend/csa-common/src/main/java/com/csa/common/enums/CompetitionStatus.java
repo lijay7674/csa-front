@@ -1,5 +1,7 @@
 package com.csa.common.enums;
-
+/**
+ * @author tanlja
+ */
 public enum CompetitionStatus {
     REGISTERING("报名中"),
     REVIEWING("审核中"),

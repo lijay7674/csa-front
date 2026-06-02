@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
+/**
+ * @author tanlja
+ */
 @Service
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {

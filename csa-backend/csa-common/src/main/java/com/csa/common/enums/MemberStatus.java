@@ -1,5 +1,7 @@
 package com.csa.common.enums;
-
+/**
+ * @author tanlja
+ */
 public enum MemberStatus {
     ACTIVE("在会"),
     CADRE("干部"),

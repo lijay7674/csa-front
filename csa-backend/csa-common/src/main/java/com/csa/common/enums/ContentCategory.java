@@ -1,5 +1,7 @@
 package com.csa.common.enums;
-
+/**
+ * @author tanlja
+ */
 public enum ContentCategory {
     ABOUT("学会介绍"),
     NEWS("新闻"),

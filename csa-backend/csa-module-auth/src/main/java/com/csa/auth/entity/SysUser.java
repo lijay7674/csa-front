@@ -9,6 +9,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * @author tanlja
+ */
 @Data
 @TableName("sys_user")
 public class SysUser {
