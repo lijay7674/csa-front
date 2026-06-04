@@ -1,75 +1,110 @@
-const STATS = [
-  { label: '待审核内容', value: 5, color: '#F59E0B', icon: '📝' },
-  { label: '待审核报名', value: 12, color: '#3B82F6', icon: '📨' },
-  { label: '已发布内容', value: 28, color: '#22C55E', icon: '✅' },
-  { label: '注册成员', value: 86, color: '#8B5CF6', icon: '👥' },
-];
+import { useEffect, useState } from 'react';
+import { fetchOverview, fetchStatisticsByEventTypeRegistrations } from '../api/admin';
+import useAuth from '../hooks/useAuth';
 
-const RECENT = [
-  { title: 'LLM 大模型应用开发实战分享会', type: '新闻', status: '已发布', time: '2 小时前' },
-  { title: '张三 - 招新报名', type: '报名', status: '待审核', time: '3 小时前' },
-  { title: '蓝桥杯算法集训启动通知', type: '公告', status: '待审核', time: '5 小时前' },
-  { title: 'React 全栈开发工作坊', type: '新闻', status: '草稿', time: '1 天前' },
+const STAT_CARDS = [
+  { key: 'contentCount', label: '内容总数', icon: '📝', color: '#3B82F6' },
+  { key: 'pendingContent', label: '待审核内容', icon: '⏳', color: '#F59E0B' },
+  { key: 'memberCount', label: '注册成员', icon: '👥', color: '#8B5CF6' },
+  { key: 'registrationCount', label: '报名总数', icon: '📨', color: '#22C55E' },
 ];
 
 export default function Dashboard() {
+  const [stats, setStats] = useState<Record<string, number>>({});
+  const [heatData, setHeatData] = useState<Record<string, number>>({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { hasPermission, isSuperAdmin } = useAuth();
+
+  useEffect(() => {
+    Promise.all([
+      fetchOverview(),
+      fetchStatisticsByEventTypeRegistrations().catch(() => ({})),
+    ])
+      .then(([s, h]) => { setStats(s); setHeatData(h); })
+      .catch(e => setError(e.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const heatEntries = Object.entries(heatData).sort(([, a], [, b]) => b - a);
+  const maxHeat = Math.max(1, ...heatEntries.map(([, v]) => v));
+
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6" style={{ color: 'var(--admin-text)' }}>
-        Dashboard
-      </h1>
+      <h1 className="text-2xl font-bold mb-6" style={{ color: 'var(--admin-text)' }}>Dashboard</h1>
 
-      {/* Stats cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {STATS.map(stat => (
-          <div
-            key={stat.label}
-            className="p-5 rounded-xl border"
-            style={{ background: 'var(--admin-card)', borderColor: 'var(--admin-border)' }}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>
-                {stat.label}
-              </span>
-              <span className="text-xl">{stat.icon}</span>
-            </div>
-            <div className="text-3xl font-bold" style={{ color: stat.color }}>
-              {stat.value}
-            </div>
-          </div>
-        ))}
-      </div>
+      {loading && <p className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>加载中...</p>}
+      {error && <p className="text-sm text-red-500">加载失败: {error}</p>}
 
-      {/* Recent activity */}
-      <div
-        className="rounded-xl border overflow-hidden"
-        style={{ background: 'var(--admin-card)', borderColor: 'var(--admin-border)' }}
-      >
-        <div className="px-5 py-3 border-b font-semibold text-sm" style={{ borderColor: 'var(--admin-border)', color: 'var(--admin-text)' }}>
-          最近动态
-        </div>
-        <div className="divide-y" style={{ borderColor: 'var(--admin-border)' }}>
-          {RECENT.map((item, i) => (
-            <div key={i} className="flex items-center justify-between px-5 py-3">
-              <div>
-                <p className="text-sm font-medium" style={{ color: 'var(--admin-text)' }}>
-                  {item.title}
-                </p>
-                <p className="text-xs mt-0.5" style={{ color: 'var(--admin-text-secondary)' }}>
-                  {item.type} · {item.time}
-                </p>
+      {!loading && !error && (
+        <>
+          {/* Stats cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            {STAT_CARDS.map(card => (
+              <div key={card.key} className="p-5 rounded-xl border"
+                style={{ background: 'var(--admin-card)', borderColor: 'var(--admin-border)' }}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm" style={{ color: 'var(--admin-text-secondary)' }}>{card.label}</span>
+                  <span className="text-xl">{card.icon}</span>
+                </div>
+                <div className="text-3xl font-bold" style={{ color: card.color }}>{stats[card.key] ?? 0}</div>
               </div>
-              <span
-                className="text-xs px-2.5 py-1 rounded-full font-semibold"
-                style={{
-                  background: item.status === '已发布' ? '#DCFCE7' : item.status === '待审核' ? '#FEF3C7' : '#F1F5F9',
-                  color: item.status === '已发布' ? '#166534' : item.status === '待审核' ? '#92400E' : '#475569',
-                }}
-              >
-                {item.status}
-              </span>
+            ))}
+          </div>
+
+          {/* 活动分布 + 报名热度 */}
+          {heatEntries.length > 0 && (
+            <div className="rounded-xl border overflow-hidden mb-8"
+              style={{ background: 'var(--admin-card)', borderColor: 'var(--admin-border)' }}>
+              <div className="px-5 py-3 border-b font-semibold text-sm" style={{ borderColor: 'var(--admin-border)', color: 'var(--admin-text)' }}>
+                📊 报名热度
+              </div>
+              <div className="p-5 space-y-3">
+                {heatEntries.map(([type, count]) => (
+                  <div key={type} className="flex items-center gap-3">
+                    <span className="text-sm w-16 text-right font-medium" style={{ color: 'var(--admin-text)' }}>{type}</span>
+                    <div className="flex-1 h-6 rounded-full overflow-hidden" style={{ background: 'var(--admin-bg)' }}>
+                      <div className="h-full rounded-full transition-all duration-700"
+                        style={{ width: `${Math.round((count / maxHeat) * 100)}%`, background: 'var(--admin-accent)', minWidth: count > 0 ? 4 : 0 }} />
+                    </div>
+                    <span className="text-sm w-12 font-semibold" style={{ color: 'var(--admin-text-secondary)' }}>{count}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+          )}
+        </>
+      )}
+
+      <div className="rounded-xl border overflow-hidden"
+        style={{ background: 'var(--admin-card)', borderColor: 'var(--admin-border)' }}>
+        <div className="px-5 py-3 border-b font-semibold text-sm" style={{ borderColor: 'var(--admin-border)', color: 'var(--admin-text)' }}>
+          快速入口
+        </div>
+        <div className="p-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {[
+            { label: '内容管理', path: '/content', icon: '📝', permissions: ['content:write'] },
+            { label: '报名管理', path: '/registrations', icon: '📨', permissions: ['registration:write'] },
+            { label: '成员管理', path: '/members', icon: '👥', permissions: ['member:write'] },
+            { label: '活动管理', path: '/events', icon: '📅', permissions: ['event:write'] },
+            { label: '竞赛管理', path: '/competitions', icon: '🏆', permissions: ['competition:write'] },
+            { label: '题库管理', path: '/question-bank', icon: '📚', permissions: ['question-bank:write'] },
+            { label: '统计查询', path: '/statistics', icon: '📈', permissions: ['stats:read'] },
+            { label: '权限管理', path: '/users', icon: '🔐', permissions: ['user:manage'] },
+          ]
+            .filter((item) => {
+              if (isSuperAdmin) return true;
+              if (!item.permissions || item.permissions.length === 0) return true;
+              return item.permissions.some((p) => hasPermission(p));
+            })
+            .map((item) => (
+              <a key={item.path} href={item.path}
+                className="flex flex-col items-center gap-2 p-4 rounded-lg text-center no-underline transition-colors hover:bg-[var(--admin-accent-light)]"
+                style={{ color: 'var(--admin-text)' }}>
+                <span className="text-2xl">{item.icon}</span>
+                <span className="text-sm font-medium">{item.label}</span>
+              </a>
+            ))}
         </div>
       </div>
     </div>

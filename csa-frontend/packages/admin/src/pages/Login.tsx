@@ -1,25 +1,30 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { login } from '../api/admin';
 
 export default function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username || !password) {
       setError('请填写用户名和密码');
       return;
     }
-    // TODO: 对接真实登录 API
-    // 临时：写死 admin/admin
-    if (username === 'admin' && password === 'admin') {
-      localStorage.setItem('csa-admin-token', 'mock-token');
+    setLoading(true);
+    setError('');
+    try {
+      const res = await login({ username, password });
+      localStorage.setItem('csa-admin-token', res.token);
       navigate('/', { replace: true });
-    } else {
-      setError('用户名或密码错误');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '登录失败');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,9 +61,8 @@ export default function Login() {
                 borderColor: 'var(--admin-border)',
                 background: 'var(--admin-bg)',
                 color: 'var(--admin-text)',
-                /* ring color inline */
               }}
-              placeholder="admin"
+              placeholder=""
             />
           </div>
           <div>
@@ -75,7 +79,7 @@ export default function Login() {
                 background: 'var(--admin-bg)',
                 color: 'var(--admin-text)',
               }}
-              placeholder="admin"
+              placeholder=""
             />
           </div>
 
@@ -85,16 +89,13 @@ export default function Login() {
 
           <button
             type="submit"
-            className="w-full h-10 rounded-lg text-sm font-semibold text-white transition-colors"
+            disabled={loading}
+            className="w-full h-10 rounded-lg text-sm font-semibold text-white transition-colors disabled:opacity-60"
             style={{ background: 'var(--admin-accent)' }}
           >
-            登录
+            {loading ? '登录中...' : '登录'}
           </button>
         </form>
-
-        <p className="text-xs text-center mt-6" style={{ color: 'var(--admin-text-secondary)' }}>
-          初始账号: admin / admin
-        </p>
       </div>
     </div>
   );

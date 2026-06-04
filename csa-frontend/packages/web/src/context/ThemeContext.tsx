@@ -6,11 +6,11 @@ interface ThemeContextType {
   setTheme: (t: ThemeName) => void;
 }
 
-const ThemeContext = createContext<ThemeContextType>({ theme: 'sakura', setTheme: () => {} });
+const ThemeContext = createContext<ThemeContextType>({ theme: 'sunset', setTheme: () => {} });
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeName>(() => {
-    return (localStorage.getItem('csa-theme') as ThemeName) || 'sakura';
+    return (localStorage.getItem('csa-theme') as ThemeName) || 'sunset';
   });
 
   const setTheme = (t: ThemeName) => {

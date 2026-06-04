@@ -105,21 +105,18 @@ export default function PublicHeader() {
             {THEMES.find(t => t.name === theme)?.label}
           </span>
 
-          {/* User area placeholder */}
-          <button
-            className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-dashed cursor-pointer transition-all"
+          {/* 后台管理入口 */}
+          <a
+            href="http://localhost:3001/login"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-dashed cursor-pointer no-underline transition-all"
             style={{ borderColor: 'var(--border)' }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.background = 'var(--accent-light)'; }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = ''; }}
           >
-            <span
-              className="w-8 h-8 rounded-full flex items-center justify-center text-xs"
-              style={{ background: 'var(--accent-light)', color: 'var(--accent-dark)' }}
-            >
-              👤
-            </span>
-            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>登录</span>
-          </button>
+            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>🔧 后台</span>
+          </a>
         </div>
       </div>
     </nav>
