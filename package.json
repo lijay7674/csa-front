@@ -1,8 +1,6 @@
 {
   "name": "csa-frontend",
   "private": true,
-  "packageManager": "pnpm@10.15.1",
-  "engines": { "node": "22.x" },
   "scripts": {
     "dev": "pnpm --filter @csa/web dev",
     "dev:admin": "pnpm --filter @csa/admin dev",
