@@ -1,39 +1,6 @@
-# WorkBuddy 内部数据
-.workbuddy/
-
-# IDE
-.idea/
-*.iml
-
-# Dependencies
 node_modules/
-.pnpm-store/
-
-# Build outputs
 dist/
-build/
-target/
-*.class
-
-# Environment
+.pnpm-cache/
+*.log
 .env
 .env.local
-.env.*.local
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-logs/
-
-# Python
-__pycache__/
-*.py[cod]
-*.egg-info/
-.venv/
-venv/
-
-# Maven
-target/
