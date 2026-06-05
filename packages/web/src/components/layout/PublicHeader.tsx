@@ -107,7 +107,7 @@ export default function PublicHeader() {
 
           {/* 后台管理入口 */}
           <a
-            href="http://localhost:3001/login"
+            href={(import.meta.env.VITE_ADMIN_URL || 'http://localhost:3001') + '/login'}
             target="_blank"
             rel="noopener noreferrer"
             className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-dashed cursor-pointer no-underline transition-all"
